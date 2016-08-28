@@ -18,9 +18,12 @@ public class MyTransformer implements ClassFileTransformer {
 
     @Override
     public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
+    	System.out.println("Transformer is processing class " + className);
 		ClassPool cp = ClassPool.getDefault();
+		CtClass clazz = null;
+		byte[] transformedBuffer = classfileBuffer;
 		try {
-			CtClass clazz = cp.makeClass(new ByteArrayInputStream(classfileBuffer));
+			clazz = cp.makeClass(new ByteArrayInputStream(classfileBuffer));
 			if (! clazz.isInterface()) {
 				CtBehavior[] methods = clazz.getDeclaredBehaviors();
 				for (CtBehavior m : methods) {
@@ -28,6 +31,7 @@ public class MyTransformer implements ClassFileTransformer {
 					for (Object a : annos) {
 						if (a instanceof ShowMessage) {
 							wrap(m);
+							transformedBuffer = clazz.toBytecode();
 							break;
 						}
 					}
@@ -36,16 +40,15 @@ public class MyTransformer implements ClassFileTransformer {
 		} catch (IOException | RuntimeException | ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (CannotCompileException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-        return new byte[0];
+        return transformedBuffer;
     }
     
     private void wrap(CtBehavior method) throws CannotCompileException {
-    	method.insertBefore("System.out.println(\"before method: \" + method.getName());");
-    	method.insertAfter("System.out.println(\"after method: \" + method.getName());");
+    	method.insertBefore("System.out.println(\"before method: " + method.getName() + "\");");
+    	method.insertAfter("System.out.println(\"after method: " + method.getName() + "\");");
     }
 }
 

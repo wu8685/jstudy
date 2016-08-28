@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com</groupId>
-	<artifactId>study</artifactId>
+	<artifactId>instrument</artifactId>
 	<packaging>jar</packaging>
 	<version>1.0-SNAPSHOT</version>
 	<name>study</name>
@@ -11,6 +11,41 @@
 		<sourceDirectory>src</sourceDirectory>
 
 		<plugins>
+			<!-- one jar -->
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<!-- key with keyword -->
+							<addClasspath>true</addClasspath>
+							<mainClass>com.study.instrument.Framework</mainClass>
+						</manifest>
+						<manifestEntries>
+							<!-- raw key-value like:
+							<key>value</key>
+							<Main-Class>com.study.instrument.Framework</Main-Class>
+							 -->
+							<Premain-Class>com.study.instrument.agent.MyAgent</Premain-Class>
+						</manifestEntries>
+					</archive>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id> <!-- this is used for inheritance merges -->
+						<phase>package</phase> <!-- bind to the packaging phase -->
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<!-- 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
@@ -20,17 +55,12 @@
 						<manifest>
 							<addClasspath>true</addClasspath>
 							<classpathPrefix>lib/</classpathPrefix>
+							<mainClass>com.study.instrument.Framework</mainClass>
 						</manifest>
 						<manifestEntries>
 							<Premain-Class>com.study.instrument.agent.MyAgent</Premain-Class>
-							<mainClass>com.study.instrument.Framework</mainClass>
 						</manifestEntries>
 					</archive>
-					<configuration>
-						<includes>
-							<include>lib/*</include>
-						</includes>
-					</configuration>
 				</configuration>
 			</plugin>
 
@@ -41,7 +71,7 @@
 				<executions>
 					<execution>
 						<id>copy-dependencies</id>
-						<phase>package</phase>
+						<phase>prepare-package</phase>
 						<goals>
 							<goal>copy-dependencies</goal>
 						</goals>
@@ -54,6 +84,7 @@
 					</execution>
 				</executions>
 			</plugin>
+ 			-->
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

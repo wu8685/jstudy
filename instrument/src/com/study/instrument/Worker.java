@@ -7,7 +7,9 @@ import com.study.instrument.agent.ShowMessage;
  */
 public class Worker {
 
-	public int value;
+	static {
+		System.out.println("Class Worker is loaded");
+	}
 	
 	@ShowMessage
     public void doSth() {

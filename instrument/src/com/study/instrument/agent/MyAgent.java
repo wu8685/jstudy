@@ -7,7 +7,9 @@ import java.lang.instrument.Instrumentation;
  */
 public class MyAgent {
 
+	// Called by JVM before class loading
     public static void premain(String args, Instrumentation inst) {
-
+    	System.out.println("Tramsformer is registerred to JVM");
+    	inst.addTransformer(new MyTransformer());
     }
 }
